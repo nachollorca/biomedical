@@ -228,7 +228,7 @@ class Ggponc(datasets.GeneratorBasedBuilder):
                         passage_id = passage["id"]
                         out["passages"].append(
                             {
-                                "id": f"{uid}-{j}",
+                                "id": f"{uid}-{passage_id}-{j}",
                                 "type": passage["type"],
                                 "text": [passage["text"]],
                                 "offsets": passage["offsets"],
