@@ -41,7 +41,7 @@ _HOMEPAGE = "https://temu.bsc.es/symptemist/"
 _LICENSE = 'CC_BY_4p0'
 
 _URLS = {
-    _DATASETNAME: "https://zenodo.org/record/8345014/files/symptemist-train_all_subtasks%2Bgazetteer%2Bmultilingual_230914.zip?download=1",
+    _DATASETNAME: "https://zenodo.org/record/8358431/files/symptemist-train_all_subtasks%2Bgazetteer%2Bmultilingual_230919.zip?download=1",
 }
 
 _SUPPORTED_TASKS = [Tasks.NAMED_ENTITY_RECOGNITION, Tasks.NAMED_ENTITY_DISAMBIGUATION]
@@ -133,7 +133,7 @@ class SymptemistDataset(datasets.GeneratorBasedBuilder):
         """Returns SplitGenerators."""
         urls = _URLS[_DATASETNAME]
         data_dir = dl_manager.download_and_extract(urls)
-        base_bath = Path(data_dir) / "symptemist-train_all_subtasks+gazetteer+multilingual_230914"
+        base_bath = Path(data_dir) / "symptemist-train_all_subtasks+gazetteer+multilingual_230919"
         track = self.config.subset_id.split('_')[1]
                 
         return [
@@ -216,12 +216,14 @@ class SymptemistDataset(datasets.GeneratorBasedBuilder):
 
             entities = []
             for row in entities_df.itertuples(name="Entity"):
+                
                 entity = {
                     "id": f"{uid}_{row.filename}_{row.Index}_entity_id",#_{row.ann_id}",
                     "type": row.label,
                     "text": [row.text],
-                    "offsets": [[row.start_span, row.end_span]],
+                    "offsets": [[row.start_span, row.end_span]] if self.config.subset_id == "symptemist_entities" else [[row.span_ini, row.span_end]],
                 }
+                
                 if self.config.schema == "source":
                     entity["concept_codes"] = []
                     entity["semantic_relations"] = []
